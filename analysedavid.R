@@ -1,0 +1,281 @@
+library("ggplot2")
+library("tidyverse")
+library("tidyr")
+library("dplyr")
+
+#mit import dataset Klick in R geholt
+#view(bevoelkerungsdichte)
+#b<- bevoelkerungsdichte
+m <- mobilitaetsziffer
+m <-Mobilitaet #nache einlesung
+b <-Bevoelkerungsdichte #nache einlesung
+
+b1<- b%>%
+  filter(Raumbezug == "Stadt München")
+ggplot(b1, aes(x = Jahr, y = Basiswert.1)) + geom_point() + geom_line() + geom_smooth(method = "lm")
+model <- lm(Jahr ~ Basiswert.1, data = b1)
+summary(model)
+
+#Geborene 2025: 15 399
+#Gestorbene 2025: 12 539
+
+b %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Indikatorwert, Jahr ) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+
+
+b %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert ) )%>%
+  arrange(korrelation) %>%
+  head(10)
+b %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert ) )%>%
+  arrange(korrelation) %>%
+  tail(10)
+# betrachten 7 13 Bogenhausen                                                          0.991
+#8 19 Thalkirchen - Obersendling - Forstenried - Fürstenried - Solln       0.991
+#9 23 Allach - Untermenzing                                                0.992
+#10 21 Pasing - Obermenzing                                                 0.995
+#1 08 Schwanthalerhöhe                     0.778
+#2 02 Ludwigsvorstadt - Isarvorstadt       0.798
+#3 03 Maxvorstadt                          0.845
+#4 01 Altstadt - Lehel                     0.902
+
+
+
+
+
+
+b2 <- b%>%
+  filter(Raumbezug %in% c("Stadt München", "01 Altstadt - Lehel", "03 Maxvorstadt",
+                          "02 Ludwigsvorstadt - Isarvorstadt", "08 Schwanthalerhöhe",
+                          "21 Pasing - Obermenzing", "23 Allach - Untermenzing",
+                          "19 Thalkirchen - Obersendling - Forstenried - Fürstenried - Solln"
+                          , "13 Bogenhausen"))%>%
+  group_by(Raumbezug)
+
+ggplot(b2, aes(x = Jahr, y = Indikatorwert, color = Raumbezug)) +geom_point() +geom_line()
+b3 <- b2 %>%
+  filter(Raumbezug != "Stadt München")
+ggplot(b3, aes(x = Jahr, y = Basiswert.1, color = Raumbezug)) +geom_point()
+ggplot(b3, aes(x = Jahr, y = Indikatorwert, color = Raumbezug)) +geom_point()
+
+bu <- b%>%
+  filter(Jahr <= 2014)
+bo<- b%>%
+  filter(Jahr > 2014)
+
+bu %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Indikatorwert, Jahr ) )%>%
+  print(n = Inf) # alle sehr hoch und ähnlich
+
+bo %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Indikatorwert, Jahr ) )%>%
+  print(n = Inf) # sb 17 02 01 08  auffälig
+
+bo1<- bo%>%
+  filter(Raumbezug %in% c("01 Altstadt - Lehel", "17 Obergiesing - Fasangarten",
+                          "02 Ludwigsvorstadt - Isarvorstadt", "08 Schwanthalerhöhe"))
+
+ggplot(bo1, aes(x = Jahr , y = Indikatorwert, color = Raumbezug)) + geom_point()
+
+
+bz <- b%>%
+  filter(Jahr == 2002 | Jahr == 2013 | Jahr == 2024)
+
+ggplot(bz, aes(x = Jahr, y = Indikatorwert, colour = Raumbezug)) + geom_point() + geom_line()
+
+
+bz1 <- bz%>%
+  filter(Raumbezug != "Stadt München")
+ggplot(bz1, aes(x = Jahr, y = Indikatorwert, colour = Raumbezug)) + geom_point() + geom_line()
+ggplot(bz1, aes(x = Jahr, y = Basiswert.1, colour = Raumbezug)) + geom_point() + geom_line()
+
+bz %>%
+  group_by(Raumbezug) %>%
+  summarise(
+    korrelation = cor(Indikatorwert, Jahr ) )%>%
+  arrange(desc(korrelation))%>%
+  print(n = Inf)
+
+
+
+bnew <- b%>%
+  mutate(
+    sn = case_when(
+      Raumbezug == "Stadt München" ~ 26,
+      TRUE ~ as.numeric(str_extract(Raumbezug, "^\\d+"))))
+
+bnewp <- bnew%>%
+  filter(Jahr == 2004 | Jahr == 2014 | Jahr == 2024 | Jahr == 2019 | Jahr == 2009)
+
+bnewp1 <- bnewp%>%
+  filter(sn < 14)
+bnewp2 <- bnewp%>%
+  filter(sn > 13)
+
+
+ggplot(bnewp1, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point() + geom_line()
+ggplot(bnewp1, aes(x= Jahr, y = Basiswert.1, colour = Raumbezug)) +geom_point() + geom_line()
+
+ggplot(bnewp2, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point() + geom_line()
+
+
+
+bnewp11 <-bnewp%>% #sb ohne Außengrenze
+  filter(sn < 11 | sn == 14 | sn == 25)
+ggplot(bnewp11, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point() + geom_line()
+bnewp12 <-bnewp%>%
+  filter(sn > 10 & sn != 14 & sn != 25)
+ggplot(bnewp12, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point() + geom_line()
+
+
+
+
+
+
+
+
+
+
+
+m1 <- m%>%
+  filter(Raumbezug == "Stadt München")%>%
+  filter(Ausprägung == "insgesamt")
+ggplot(m1, aes(x = Jahr, y = Indikatorwert)) + geom_point() + geom_line() + geom_smooth(method = "lm")
+
+m2 <- m%>%
+  filter(Raumbezug == "Stadt München")
+ggplot(m2, aes(x = Jahr, y = Indikatorwert, color = Ausprägung)) + geom_point() +geom_line()
+
+
+
+
+m%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert ) )%>%
+  arrange(korrelation) %>%
+  print(n = Inf) #sehr interessant 22 12 23; andere seite 08 17 06
+
+
+
+
+m%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert ) )%>%
+  arrange(korrelation) %>%
+  tail(5)
+
+m%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert) )%>%
+  arrange(korrelation) %>%
+  head(5)
+
+
+m%>%
+  filter(Raumbezug == "Stadt München")%>%
+  group_by(Ausprägung)%>%
+  summarise(
+    korrelation = cor(Jahr, Indikatorwert) )%>%
+  arrange(korrelation) # leicht interessant
+
+
+m3 <- m%>%
+  mutate(bpn1 = 100 *Basiswert.1 / Basiswert.5,
+         bpn2 = 100 *Basiswert.2 / Basiswert.5,
+         bpn3 = 100 *Basiswert.3 / Basiswert.5,
+         bpn4 = 100 *Basiswert.4 / Basiswert.5)
+
+m3%>%
+  filter(Raumbezug == "Stadt München")%>%
+  group_by(Ausprägung)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn1) )%>%
+  arrange(korrelation)
+
+m3%>%
+  filter(Raumbezug == "Stadt München")%>%
+  group_by(Ausprägung)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn2) )%>%
+  arrange(korrelation)
+m3%>%
+  filter(Raumbezug == "Stadt München")%>%
+  group_by(Ausprägung)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn3) )%>%
+  arrange(korrelation)
+
+m3%>%
+  filter(Raumbezug == "Stadt München")%>%
+  group_by(Ausprägung)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn4) )%>%
+  arrange(korrelation)
+
+m3%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn4) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+m3%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn3) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+
+m3%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn2) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+m3%>%
+  filter(Ausprägung == "insgesamt")%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, bpn1) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+mplot1 <- m3%>%
+  filter(Raumbezug == "Stadt München")
+ggplot(mplot1, aes(x = Jahr, y = Basiswert.5, color = Ausprägung)) + geom_point() + geom_line() #+geom_smooth(method = "lm")
+
+
+ggplot(mplot1, aes(x = Jahr, y = bpn1, color = Ausprägung)) + geom_point() + geom_line()
+
+ggplot(mplot1, aes(x = Jahr, y = bpn2, color = Ausprägung)) + geom_point() + geom_line()
+
+ggplot(mplot1, aes(x = Jahr, y = bpn3, color = Ausprägung)) + geom_point() + geom_line()
+
+ggplot(mplot1, aes(x = Jahr, y = bpn4, color = Ausprägung)) + geom_point() + geom_line()
+
+
