@@ -304,7 +304,14 @@ mplot09 <- mnew%>%
   filter(Jahr == 2000 | Jahr == 2005 | Jahr == 2010 | Jahr == 2015 | Jahr == 2020 | Jahr == 2024)%>%
   filter(sn != 26)
 
-ggplot(mplot09, aes(x = Jahr, y = ar, color = Raumbezug)) + geom_point()+ geom_line() #sehr schön corona Auswirkung
+ggplot(mplot09, aes(x = Jahr, y = ar, color = Raumbezug)) + geom_point()+ geom_line() #ma könnte zunächst meinen corona Auswirkung
+
+
+mplot0901 <- mnew%>%
+  filter(sn == 26)
+
+ggplot(mplot0901, aes(x = Jahr, y = ar, color = Ausprägung)) + geom_point()+ geom_line() # staatsbürgerschaft
+
 
 
 
