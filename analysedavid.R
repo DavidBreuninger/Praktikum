@@ -65,8 +65,8 @@ b2 <- b%>%
 ggplot(b2, aes(x = Jahr, y = Indikatorwert, color = Raumbezug)) +geom_point() +geom_line()
 b3 <- b2 %>%
   filter(Raumbezug != "Stadt München")
-ggplot(b3, aes(x = Jahr, y = Basiswert.1, color = Raumbezug)) +geom_point()
-ggplot(b3, aes(x = Jahr, y = Indikatorwert, color = Raumbezug)) +geom_point()
+ggplot(b3, aes(x = Jahr, y = Basiswert.1, color = Raumbezug)) +geom_point() +geom_line()
+ggplot(b3, aes(x = Jahr, y = Indikatorwert, color = Raumbezug)) +geom_point() +geom_line()
 
 bu <- b%>%
   filter(Jahr <= 2014)
@@ -140,6 +140,13 @@ ggplot(bnewp11, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point
 bnewp12 <-bnewp%>%
   filter(sn > 10 & sn != 14 & sn != 25)
 ggplot(bnewp12, aes(x= Jahr, y = Indikatorwert, colour = Raumbezug)) +geom_point() + geom_line()
+
+bnew11 <-bnew%>% #sb ohne Außengrenze
+  filter(sn < 10 | sn == 14 | sn == 25 | sn == 17) #10 hat zu kleine werte
+bnew12 <-bnew%>%
+  filter(sn > 10 & sn != 14 & sn != 25  & sn != 17) #17 hat zu hohe werte
+ggplot(bnew11, aes(x= Jahr, y = Indikatorwert)) +geom_point() + geom_line() + facet_wrap(~ sn)
+ggplot(bnew12, aes(x= Jahr, y = Indikatorwert)) +geom_point() + geom_line() + facet_wrap(~ sn)
 
 
 
@@ -218,6 +225,8 @@ m3%>%
   summarise(
     korrelation = cor(Jahr, bpn2) )%>%
   arrange(korrelation)
+
+
 m3%>%
   filter(Raumbezug == "Stadt München")%>%
   group_by(Ausprägung)%>%
@@ -238,7 +247,7 @@ m3%>%
   summarise(
     korrelation = cor(Jahr, bpn4) )%>%
   arrange(korrelation)%>%
-  print(n = Inf)
+  print(n = Inf) #17, 12, 10, 02
 
 m3%>%
   filter(Ausprägung == "insgesamt")%>%
@@ -246,7 +255,45 @@ m3%>%
   summarise(
     korrelation = cor(Jahr, bpn3) )%>%
   arrange(korrelation)%>%
-  print(n = Inf)
+  print(n = Inf) #12, 22, 17, 07
+
+mp301 <- mnew %>%
+  filter(sn == 26)
+ggplot(mp301, aes(x = Jahr, y = bpn3, color = Ausprägung)) +geom_point() + geom_line() + geom_smooth(method = "lm")
+ggplot(mp301, aes(x = Jahr, y = Basiswert.3, color = Ausprägung)) +geom_point() + geom_line() + geom_smooth(method = "lm")
+ggplot(mp301, aes(x = Jahr, y = bpn4, color = Ausprägung)) +geom_point() + geom_line()
+ggplot(mp301, aes(x = Jahr, y = Basiswert.4, color = Ausprägung)) +geom_point() + geom_line()
+
+mp302 <- mnew %>%
+  filter(sn == 17 |sn == 22 |sn == 12 |sn == 07 |sn == 10 |sn == 02 )
+
+ggplot(mp302, aes(x = Jahr, y = bpn3, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp302, aes(x = Jahr, y = bpn4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+
+
+ggplot(mp302, aes(x = Jahr, y = bpn3 + bpn4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp302, aes(x = Jahr, y = Basiswert.3 + Basiswert.4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+
+ggplot(mp301, aes(x = Jahr, y = bpn3 + bpn4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp301, aes(x = Jahr, y = Basiswert.3 + Basiswert.4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+ggplot(mp302, aes(x = Jahr, y = bpn2, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp302, aes(x = Jahr, y = bpn4 + Basiswert.4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp302, aes(x = Jahr, y = Basiswert.2, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+ggplot(mp302, aes(x = Jahr, y = Basiswert.4 + Basiswert.4, color = Ausprägung)) +geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+
+
+
+
+
+ggplot(mp301, aes(x = Jahr, y = bpn1, color = Ausprägung)) +geom_point() + geom_line()
+
+ggplot(mp301, aes(x = Jahr, y = Basiswert.1, color = Ausprägung)) +geom_point() + geom_line()
+
+
 
 
 m3%>%
@@ -292,6 +339,8 @@ mnew <- mnew%>%
 
 mnew <- mnew%>%
   mutate(ar = Basiswert.1 - Basiswert.3 + Basiswert.2 -Basiswert.4)
+mnew <- mnew%>%
+  mutate(rar = ar / Basiswert.5)
 
 mplot009 <- mnew%>%
   filter(sn == 26)
@@ -311,6 +360,73 @@ mplot0901 <- mnew%>%
   filter(sn == 26)
 
 ggplot(mplot0901, aes(x = Jahr, y = ar, color = Ausprägung)) + geom_point()+ geom_line() # staatsbürgerschaft
+
+
+
+
+
+
+mnew%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, rar) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+mnew%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, ar) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+mnew%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, gsr) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf)
+
+mnew%>%
+  group_by(Raumbezug)%>%
+  summarise(
+    korrelation = cor(Jahr, rgsr) )%>%
+  arrange(korrelation)%>%
+  print(n = Inf) #17, 22
+
+
+mplot0902<- mnew%>%
+  filter(sn == 17 | sn == 22)
+
+ggplot(mplot0902, aes(x = Jahr, y = ar, color = Ausprägung)) + geom_point()+ geom_line() + facet_wrap(~Raumbezug)
+
+ggplot(mplot0902, aes(x = Jahr, y = Basiswert.1 + Basiswert.2, color = Ausprägung)) + geom_point()+ geom_line() + facet_wrap(~Raumbezug)
+
+ggplot(mplot0902, aes(x = Jahr, y = Basiswert.3 + Basiswert.4, color = Ausprägung)) + geom_point()+ geom_line() + facet_wrap(~Raumbezug)
+
+
+b009 <- bnew%>%
+  filter(sn == 22 | sn == 17 | sn == 26)
+  
+ggplot(b009, aes(x = Jahr, y = Indikatorwert, color = Ausprägung)) + geom_point()+ geom_line() + facet_wrap(~Raumbezug)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
