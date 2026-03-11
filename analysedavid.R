@@ -6,7 +6,7 @@ library("dplyr")
 #mit import dataset Klick in R geholt
 #view(bevoelkerungsdichte)
 #b<- bevoelkerungsdichte
-m <- mobilitaetsziffer
+#m <- mobilitaetsziffer
 m <-Mobilitaet #nache einlesung
 b <-Bevoelkerungsdichte #nache einlesung
 
@@ -153,10 +153,31 @@ ggplot(bnew12, aes(x= Jahr, y = Indikatorwert)) +geom_point() + geom_line() + fa
 
 
 
+m3 <- m%>% #protzentuale Wert für Ausagekraft ähnlcih wie Indikatorwert nur um 10 Faktor anders
+  mutate(bpn1 = 100 *Basiswert.1 / Basiswert.5,
+         bpn2 = 100 *Basiswert.2 / Basiswert.5,
+         bpn3 = 100 *Basiswert.3 / Basiswert.5,
+         bpn4 = 100 *Basiswert.4 / Basiswert.5)
 
 
 
+mnew <- m3%>%
+  mutate(
+    sn = case_when(
+      Raumbezug == "Stadt München" ~ 26,
+      TRUE ~ as.numeric(str_extract(Raumbezug, "^\\d+"))))
 
+
+
+mnew <- mnew%>%
+  mutate(gsr = Basiswert.1 - Basiswert.3)
+mnew <- mnew%>%
+  mutate(rgsr = gsr / Basiswert.5)
+
+mnew <- mnew%>%
+  mutate(ar = Basiswert.1 - Basiswert.3 + Basiswert.2 -Basiswert.4)
+mnew <- mnew%>%
+  mutate(rar = ar / Basiswert.5)
 
 m1 <- m%>%
   filter(Raumbezug == "Stadt München")%>%
