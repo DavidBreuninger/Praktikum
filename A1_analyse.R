@@ -33,15 +33,46 @@ zuzug <- zuzug %>%
   filter(Ausprägung%in%c("deutsch","nichtdeutsch")
   )
 
+#
+zuzug<- zuzug %>%
+  group_by(Jahr, Raumbezug, Ausprägung) %>%
+  summarise(Zuzuege = sum(Basiswert), .groups = "drop")
+
+
+
+
+
 #Grafik
 library(ggplot2)
-Zuzug <-ggplot(zuzug,aes(x=Jahr,y=Basiswert,color=Ausprägung))+
-  geom_line()+facet_wrap(~Raumbezug)+
-  labs(title = "Entwicklung der Zuzüge in die Münchner Stadtbezirke",
-       color="Nationalitaet",y="Anzahl der Zuzuege")
-
+Zuzug <-ggplot(zuzug,
+               aes(x=Jahr,
+                   y=Zuzuege,
+                   color=Ausprägung))+
+  geom_line()+
+  facet_wrap(~Raumbezug,
+             labeller = label_wrap_gen(width = 30))+
+  labs(title = "Entwicklung der Zu- und Umzüge in die Münchner Stadtbezirke (2000–2024)",
+       color="Nationalität",y="Anzahl der Zu- und Umzüge")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text(size = 7,face="bold"),
+        panel.spacing.x = unit(1.2, "lines"))
+      
 Zuzug 
+
 #save Grafik
-ggsave("Result/zuzug_plot.jpg", plot = Zuzug)
+ggsave("Result/zuzug_plot.jpg", plot = Zuzug,width = 10, height = 6)
+
+#save Datensaetzen
+write.csv(mob_long, "Data/A1_mob_long.csv", row.names = FALSE)
+write.csv(zuzug, "Data/_A1_zuzug", row.names = FALSE)
+
+
+
+
+
+
+
+
 
 
