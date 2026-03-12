@@ -33,14 +33,10 @@ zuzug <- zuzug %>%
   filter(Ausprägung%in%c("deutsch","nichtdeutsch")
   )
 
-#
+#Zuzuege
 zuzug<- zuzug %>%
   group_by(Jahr, Raumbezug, Ausprägung) %>%
   summarise(Zuzuege = sum(Basiswert), .groups = "drop")
-
-
-
-
 
 #Grafik
 library(ggplot2)
