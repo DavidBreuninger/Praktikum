@@ -65,7 +65,7 @@ ggsave("Result/zuzug_plot.jpg", plot = Zuzug,width = 10, height = 6)
 
 #save Datensaetzen
 write.csv(mob_long, "Data/A1_mob_long.csv", row.names = FALSE)
-write.csv(zuzug, "Data/_A1_zuzug", row.names = FALSE)
+write.csv(zuzug, "Data/A1_zuzug.csv", row.names = FALSE)
 
 
 
