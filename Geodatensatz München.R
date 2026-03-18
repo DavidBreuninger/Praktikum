@@ -68,7 +68,7 @@ ggplot(plotdata2000Wegzügeinsgesamt) +
   theme_minimal() +
   ggtitle("Wegzüge 2000 insgesamt")
 
-#Facet
+#Facet Wegzüge insgesamt
 plotdatafacet <- plotdata %>% filter(Ausprägung == "insgesamt")
 
 ggplot(plotdatafacet) +
@@ -82,23 +82,52 @@ ggplot(plotdatafacet) +
               axis.ticks = element_blank(),
               axis.title = element_blank())
 
+#Facet Wegzüge außerstädtisch
 ggplot(plotdatafacet) +
   geom_sf(aes(fill = Basiswert.3)) +
   scale_fill_viridis_c() +
   facet_wrap(~ Jahr) +
   theme_minimal() +
   labs(title = "Wegzüge aus München nach Stadtbezirk",
-       fill = "Wegzüge"
-       legend = "Wegzüge außerstädtisch") +
+       fill = "Wegzüge innerstädtisch") +
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank())
 
+#Facet Wegzüge innerstädtisch
+ggplot(plotdatafacet) +
+  geom_sf(aes(fill = Basiswert.4)) +
+  scale_fill_viridis_c() +
+  facet_wrap(~ Jahr) +
+  theme_minimal() +
+  labs(title = "Wegzüge innerhalb Münchens nach Stadtbezirk",
+       fill = "Wegzüge innerstädtisch") +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 
+#Facet Zuzüge außerstädtisch
+ggplot(plotdatafacet) +
+  geom_sf(aes(fill = Basiswert.1)) +
+  scale_fill_viridis_c() +
+  facet_wrap(~ Jahr) +
+  theme_minimal() +
+  labs(title = "Zuzüge außerstädtisch nach Stadtbezirk",
+       fill = "Zuzüge außerstädtisch") +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 
-
-
-
-
+#Facet Zuzüge innerstädtisch
+ggplot(plotdatafacet) +
+  geom_sf(aes(fill = Basiswert.2)) +
+  scale_fill_viridis_c() +
+  facet_wrap(~ Jahr) +
+  theme_minimal() +
+  labs(title = "Zuzüge innerstädtisch nach Stadtbezirk",
+       fill = "Zuzüge innerstädtisch") +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 
 
