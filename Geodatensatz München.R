@@ -2,7 +2,8 @@
 #Bezirksdatensatz plotten
 install.packages("sf")
 library("sf")
-read.csv("vablock_stadtbezirk")
+library("readr")
+read_csv("data/vablock_stadtbezirk.csv")
 bezirke <- vablock_stadtbezirk
 bezirke <- bezirke %>%
   mutate(geometry = st_as_sfc(shape)) %>%
@@ -22,7 +23,7 @@ Mobilität_clean <- indikat2510_bevoelkerung_mobilitaetsziffer_28_10_25 %>%
   mutate(Zuzügegesamt = Basiswert.1 + Basiswert.2) %>%
   mutate(Wegzügegesamt = Basiswert.3 + Basiswert.4)
 Mobilität_cleaner <- Mobilität_clean %>%
-  filter(grepl("^[0-9]{2} ", Raumbezug)) 
+  filter(grepl("^[0-9]{2} ", Raumbezug))
 
 #Join durchführen
 plotdata <- bezirke %>%
@@ -129,5 +130,33 @@ ggplot(plotdatafacet) +
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank())
+
+#Netto-Migration
+plotdataNetto <- plotdata %>%
+  filter(Ausprägung == "insgesamt") %>%
+  mutate(netto = (Basiswert.1 + Basiswert.2) - (Basiswert.3 + Basiswert.4))
+
+ggplot(plotdataNetto) +
+  geom_sf(aes(fill = netto)) +
+  scale_fill_gradient2(
+    low = "red",
+    mid = "white",
+    high = "blue",
+    midpoint = 0,
+  ) +
+  facet_wrap(~ Jahr) +
+  labs(title = "Netto Migration") +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+  )
+
+
+
+
+
+
 
 
