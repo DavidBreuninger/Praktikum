@@ -37,7 +37,7 @@ b1<- b%>%
 p1 <-ggplot(b1, aes(x = Jahr, y = Basiswert.1)) + geom_point() + geom_line() +
   labs(y = "Einwohnerzahl", title = "Stadt München")
 p1
-mplot1 <- m3%>%
+mplot1 <- mnew%>%
   filter(Raumbezug == "Stadt München")
 p2<-ggplot(mplot1, aes(x = Jahr, y = Basiswert.5, color = Ausprägung)) + geom_point() + 
   geom_line() +labs(y = "mittlere Wohnbevölkerung", title = "Einwohnerzahl nach Staatsbürgerschaft") 
