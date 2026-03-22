@@ -56,3 +56,20 @@ Bevoelkerungsdichte_thin <- Bevoelkerungsdichte_thin %>%
   pivot_wider(
     names_from = Name.Basiswert.2,
     values_from = Basiswert.2)
+
+# create column with numbers in "Raumbezug" to ease identification
+Bevoelkerungsdichte_thin <- Bevoelkerungsdichte_thin %>%
+  mutate(
+    BezirksID = case_when(
+      Raumbezug == "Stadt München" ~ 26,
+      TRUE ~ as.numeric(str_extract(Raumbezug, "^\\d+"))))
+
+Mobilitaet_thin <- Mobilitaet_thin %>%
+  mutate(
+    BezirksID = case_when(
+      Raumbezug == "Stadt München" ~ 26,
+      TRUE ~ as.numeric(str_extract(Raumbezug, "^\\d+"))))
+
+# save 
+write.csv(Mobilitaet_thin, "Clean_Data/Mobilitaet_thin.csv", row.names = FALSE)
+write.csv(Bevoelkerungsdichte_thin, "Clean_Data/Bevoelkerungsdichte_thin.csv", row.names = FALSE)
