@@ -19,38 +19,24 @@ remove_Auspraegung <- function(df) {
   return(df)
 }
 
-# vectors for functions read_xls_matrix and read_xlsx_matrix
-Mobilitaet_thin <- read.csv("Clean_Data/Mobilitaet_thin.csv")
-Bezirke <- Mobilitaet_thin %>%
+# vectors of distinct Raumbezug 
+Mobilitaet <- read.csv("Data/indikat2510_bevoelkerung_mobilitaetsziffer_28_10_25.csv")
+Bezirke <- Mobilitaet %>%
   select(Raumbezug) %>% 
   distinct() %>% 
   filter(Raumbezug != "Stadt München") %>%
   pull()
-jahrbuch_spaltennamen <- c("Anfangsbezirk", Bezirke, "zusammen")
-jahrbuch_spaltentypen <- c("text", rep("numeric", 26))
 
-# FUNC3: read_xls_matrix, read_xls function with set parameters, for the given data
-read_xls_matrix <- function(filepath) {
-  require(readxl)
-  require(dplyr)
-  df <- read_xls(filepath, 
-                 col_names = jahrbuch_spaltennamen,
-                 skip = 4,
-                 col_types = jahrbuch_spaltentypen,
-                 n_max = 26)
+# FUNC3: matrix_to_long, pivots data table to a long format for work with ggplot2, adds a coumn with one year
+matrix_to_long <- function(df, year) {
+  df<- df %>%
+    filter(Anfangsbezirk_Nr %in% 1:25) %>%
+    cbind(Anfangsbezirk = Bezirke) %>%
+    pivot_longer(
+      cols = starts_with(c("0", "1", "2")),
+      names_to = "Umzugsbezirk",
+      values_to = "Anzahl") %>%
+    select(all_of(Bezirke)) %>% 
+    mutate(Jahr = year)
   return(df)
 }
-
-# FUNC4: read_xlsx_matrix, read_xlsx function with set parameters, for the given data
-read_xlsx_matrix <- function(filepath) {
-  require(readxl)
-  require(dplyr)
-  df <- read_xlsx(filepath, 
-                 col_names = jahrbuch_spaltennamen,
-                 skip = 4,
-                 col_types = jahrbuch_spaltentypen,
-                 n_max = 26)
-  return(df)
-}
-
-# FUNC5: matrix_to_long, pivots matrices to a long format for work with ggplot2
