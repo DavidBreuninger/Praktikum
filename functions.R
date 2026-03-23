@@ -27,16 +27,18 @@ Bezirke <- Mobilitaet %>%
   filter(Raumbezug != "Stadt München") %>%
   pull()
 
-# FUNC3: matrix_to_long, pivots data table to a long format for work with ggplot2, adds a coumn with one year
+# FUNC3: matrix_to_long, pivots data table to a long format for work with ggplot2, adds a column with one year
 matrix_to_long <- function(df, year) {
-  df<- df %>%
-    filter(Anfangsbezirk_Nr %in% 1:25) %>%
+  df <- df %>%
+    filter(Anfangsbezirk_Nr %in% 1:25)
+  df[2:25] <- as.data.frame(sapply(df[2:25], as.numeric))
+  df <- df %>% 
+    select(all_of(c("Anfangsbezirk_Nr", Bezirke))) %>% 
+    mutate(Jahr = year) %>%
     cbind(Anfangsbezirk = Bezirke) %>%
     pivot_longer(
       cols = starts_with(c("0", "1", "2")),
       names_to = "Umzugsbezirk",
-      values_to = "Anzahl") %>%
-    select(all_of(Bezirke)) %>% 
-    mutate(Jahr = year)
+      values_to = "Anzahl") 
   return(df)
 }
