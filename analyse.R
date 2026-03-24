@@ -633,3 +633,26 @@ mnew%>%
   filter(Ausprägung == "insgesamt")%>%
   ggplot( aes(x =Jahr, y = bpn3 )) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
 
+bnew%>%
+  filter(Ausprägung == "insgesamt")%>%
+  filter(sn != 26)%>%
+  filter(Jahr == 2024)%>%
+  ggplot( aes(x =Jahr, y = Basiswert.1 )) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+mnew%>%
+  filter(sn == 26)%>%
+  ggplot(aes(x = Jahr, y = Basiswert.2, color = Ausprägung)) + geom_point() + geom_line()
+
+mnew%>%
+  filter(sn != 26)%>%
+  ggplot(aes(x = Jahr, y = Basiswert.1 + Basiswert.2, color = Ausprägung)) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+
+mnew%>%
+  filter(sn == 12 | sn == 19)%>%
+  ggplot(aes(x = Jahr, y = Basiswert.1 + Basiswert.2, color = Ausprägung)) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+
+mnew%>%
+  filter(sn == 12 | sn == 19)%>%
+  ggplot(aes(x = Jahr, y = Basiswert.3 + Basiswert.4, color = Ausprägung)) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
