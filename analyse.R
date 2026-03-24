@@ -12,13 +12,11 @@ library("dplyr")
 #m <- mobilitaetsziffer
 m <-Mobilitaet #nache einlesung
 b <-Bevoelkerungsdichte #nache einlesung
+#b <-indikat2510_bevoelkerung_bevoelkerungsdichte_28_10_25
+#m <- indikat2510_bevoelkerung_mobilitaetsziffer_28_10_25
 
 
 
-
-
-ggplot(b1, aes(x = Jahr, y = Basiswert.1)) + geom_point() + geom_line() +
-  labs(y = "Einwohnerzahl", title = "Stadt München")
 
 
 
@@ -29,6 +27,8 @@ ggplot(b1, aes(x = Jahr, y = Basiswert.1)) + geom_point() + geom_line() + geom_s
 model <- lm(Jahr ~ Basiswert.1, data = b1)
 summary(model)
 
+ggplot(b1, aes(x = Jahr, y = Basiswert.1)) + geom_point() + geom_line() +
+  labs(y = "Einwohnerzahl", title = "Stadt München")
 #Geborene 2025: 15 399 https://de.statista.com/statistik/daten/studie/1228950/umfrage/geburten-todesfaelle-muenchen/
 #Gestorbene 2025: 12 539
 
@@ -619,4 +619,17 @@ mnew%>%
   filter(sn == 26)%>%
   ggplot(aes(x = Jahr, y = Basiswert.2, color = Ausprägung)) +geom_point() +
   geom_line()+ facet_wrap(~ Raumbezug)
+
+
+
+mnew%>%
+  filter(Ausprägung == "insgesamt")%>%
+ggplot( aes(x =Jahr, y = bpn3 + bpn4)) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+
+mnew%>%
+  filter(Ausprägung == "insgesamt")%>%
+  ggplot( aes(x =Jahr, y =  bpn4)) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
+mnew%>%
+  filter(Ausprägung == "insgesamt")%>%
+  ggplot( aes(x =Jahr, y = bpn3 )) + geom_point() + geom_line() + facet_wrap(~ Raumbezug)
 
