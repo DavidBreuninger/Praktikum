@@ -177,7 +177,9 @@ p5 <- mnew%>%
  ggplot( aes(x = Jahr, y = ar, color = Ausprägung)) + geom_point()+ 
   geom_line() + labs(y = "Nettoumzug",
                      title = "Entwicklung in der Stadt München",
-                     color = "Staatsbürgerschaft") + theme_bw()
+                     color = "Staatsbürgerschaft") + 
+  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) +
+  theme_bw()
 
 p5
 ggsave("Results/p5.jpg", plot = p5,width = 10, height = 6)
@@ -226,7 +228,7 @@ p7<- mnew%>%
   labs(y = "Zuzug", 
        title = "Entwicklung in der Stadt München",
        color = "Staatsbürgerschaft") +
-  scale_y_continuous(labels = label_number(scale = 1e-6,suffix = "Mio.")) + 
+  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) + 
   theme_bw() 
 p7
 
@@ -241,7 +243,7 @@ p8<-mnew%>%
   labs(y = "Wegzug", 
        title = "Entwicklung in der Stadt München" ,
        color = "Staatsbürgerschaft") +
-  scale_y_continuous(labels = label_number(scale = 1e-6,suffix = "Mio.")) +
+  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) +
   theme_bw() 
 p8
 
