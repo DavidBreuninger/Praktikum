@@ -19,26 +19,52 @@ remove_Auspraegung <- function(df) {
   return(df)
 }
 
-# vectors of distinct Raumbezug 
-Mobilitaet <- read.csv("Data/indikat2510_bevoelkerung_mobilitaetsziffer_28_10_25.csv")
-Bezirke <- Mobilitaet %>%
+# vectors of distinct Raumbezug, district numbers removed
+Mobilitaet_thin <- read.csv("Clean_Data/Mobilitaet_thin.csv")
+Bezirke <- Mobilitaet_thin %>%
   select(Raumbezug) %>% 
   distinct() %>% 
   filter(Raumbezug != "Stadt München") %>%
-  pull()
+  pull() %>%
+  str_remove_all("^[0-9]{2} ")%>%
+  str_replace("Thalkirchen - Obersendling - Forstenried - Fürstenried - Solln", "Thalkirchen") %>%
+  str_replace("Aubing - Lochhausen - Langwied", "Aubing")
 
-# FUNC3: matrix_to_long, pivots data table to a long format for work with ggplot2, adds a column with one year
-matrix_to_long <- function(df, year) {
+# vector for setting column names
+jahrbuch_spaltennamen <- c("Anfangsbezirk_Nr", Bezirke)
+spaltennamen_ID <- as.character(c("Anfangsbezirk_Nr",1:25))
+
+# get data frame with number of people, who moved outside of Munich
+wegzug_außerstadt <- Mobilitaet_thin %>%
+  filter(Ausprägung == "insgesamt") %>%
+  select(Raumbezug, Jahr, außerstädtisch.Weggezogene.) %>% 
+  distinct() %>% 
+  filter(Raumbezug != "Stadt München") %>%
+  rename(außerstaedtisch = außerstädtisch.Weggezogene.)
+
+# FUNC3: colnames_to_ID, sets the colnames to district IDs, filters relevant rows
+colnames_to_ID <- function(df) {
   df <- df %>%
+    select(colnames(.)[1:26]) %>%
+    setnames(new = spaltennamen_ID) %>%
     filter(Anfangsbezirk_Nr %in% 1:25)
-  df[2:25] <- as.data.frame(sapply(df[2:25], as.numeric))
-  df <- df %>% 
-    select(all_of(c("Anfangsbezirk_Nr", Bezirke))) %>% 
-    mutate(Jahr = year) %>%
+  return(df)
+}
+
+#FUNC4: add_umzug_info, adds columns Jahr (passed as Variable year), 
+#       innerstaedtisch, außerstaedtisch, insgesamt und Bezirke 
+add_umzug_info <- function(df, year) {
+  df[2:26] <- as.data.frame(sapply(df[2:26], as.numeric)) # turn district columns into numeric
+  
+  außerstadt <- wegzug_außerstadt %>%
+    filter(Jahr == year) %>%
+    mutate(Anfangsbezirk = Bezirke) %>%
+    select(!Raumbezug)
+  
+  df <- df[1:26] %>% 
     cbind(Anfangsbezirk = Bezirke) %>%
-    pivot_longer(
-      cols = starts_with(c("0", "1", "2")),
-      names_to = "Umzugsbezirk",
-      values_to = "Anzahl") 
+    mutate(innerstaedtisch = rowSums(df[2:26])) %>%
+    left_join(außerstadt) %>%
+    mutate(insgesamt = innerstaedtisch + außerstaedtisch)
   return(df)
 }
