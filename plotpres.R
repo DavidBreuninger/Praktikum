@@ -160,7 +160,7 @@ p3b <-bnew %>% filter(Raumbezug == "Stadt München") %>%
 
 p3b
 
-ggsave("Results/p3b.jpg", plot = p3,width = 10, height = 6)
+ggsave("Results/p3b.jpg", plot = p3b,width = 10, height = 6)
 
 
 
@@ -385,7 +385,7 @@ ggplot(aes(x = Jahr, y = rb5, color = Ausprägung)) +
   geom_point(size=0.6)+ geom_line() +
   facet_wrap(~Raumbezug) +
   labs(y= "Anteil", 
-       title = "Entwicklung der Staatsbürgerschaft ind den bezirken",
+       title = "Entwicklung der Staatsbürgerschaft in den Bezirken",
        color = "Staatsbürgerschaft")+
   scale_y_continuous(limits = c(0,1))+
   theme_bw()+
@@ -417,7 +417,7 @@ p13 <- mnew%>%
 
 p13
 
-ggsave("Results/p13.jpg", plot = p13,width = 8, height = 6)  
+ggsave("Results/p13.jpg", plot = p13,width = 5, height = 3)  
 
 
 #titel Innerstädtische Umzüge der Stadt München; y = Anteil
@@ -432,7 +432,7 @@ p14 <- mnew%>%
 
 p14 
 
-ggsave("Results/p14.jpg", plot = p14,width = 8, height = 6)
+ggsave("Results/p14.jpg", plot = p14,width = 5, height = 3)
 
 
 #titel Umzüge der Stadt München; y = Anteil
@@ -447,7 +447,7 @@ p15 <- mnew%>%
 
 p15
 
-ggsave("Results/p14.jpg", plot = p14,width = 8, height = 6)
+ggsave("Results/p15.jpg", plot = p15,width = 5, height = 3)
 
 
 
