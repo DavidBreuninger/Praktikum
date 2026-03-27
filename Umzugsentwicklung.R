@@ -23,23 +23,41 @@ umzug_Bezirksgruppen_long <- umzug_Bezirksgruppen %>%
                values_to = "Anzahl")
 
 # stacked barplot absolute values
-ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl, fill = Umzug)) + 
+ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl, 
+                             fill = Umzug)) + 
   geom_bar(stat = "identity",  color = "white") +
-  facet_wrap(~ Anfangsbezirk, scales = "free") +
-  theme_bw()
+  facet_wrap(~ Anfangsbezirk, scales = "free_y") +
+  theme_bw() +
+  labs(y = "Anzahl Umzüge", fill = "Umzug") +
+  scale_fill_manual(values = c("außerstaedtisch" = "#FFFF6D", "innerstaedtisch" = "#8491B4"))
 
-ggplot(umzug_Bezirksgruppen_long, aes(x = Jahr, y = Anzahl, fill = Umzug)) + 
+ggplot(umzug_Bezirksgruppen_long, aes(x = Jahr, y = Anzahl, 
+                                      fill = factor(Umzug, levels = c("außerstaedtisch", "Restbezirke", "Nachbarbezirke", "selber Bezirk")))) + 
   geom_bar(stat = "identity",  color = "white") +
-  facet_wrap(~ Anfangsbezirk, scales = "free") +
-  theme_bw()
+  facet_wrap(~ Anfangsbezirk, scales = "free_y") +
+  theme_bw() +
+  labs(y = "Anzahl Umzüge", fill = "Umzug") + 
+  scale_fill_manual(values = c("außerstaedtisch" = "#FFFF6D", "Restbezirke" = "#009292", "Nachbarbezirke" = "#DB6D00", "selber Bezirk" = "#B66DFF"))
 
 # stacked percentage barplot 
-ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl, fill = Umzug)) + 
+plot_Umzug_Stadt <- ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl, fill = Umzug)) + 
   geom_bar(position = "fill", stat = "identity",  color = "white") +
   facet_wrap(~ Anfangsbezirk) +
-  theme_bw()
+  theme_bw() + 
+  ylab("Anteil Umzüge") +
+  scale_fill_manual(values = c("außerstaedtisch" = "#FFFF6D", "innerstaedtisch" = "#8491B4")) + 
+  theme(axis.text.x = element_text(size = 7))
 
-ggplot(umzug_Bezirksgruppen_long, aes(x = Jahr, y = Anzahl, fill = Umzug)) + 
+plot_Umzug_Bezirke <- ggplot(umzug_Bezirksgruppen_long, 
+                             aes(x = Jahr, y = Anzahl, 
+                                 fill = factor(Umzug, levels = c("außerstaedtisch", "Restbezirke", "Nachbarbezirke", "selber Bezirk")))) + 
   geom_bar(position = "fill", stat = "identity",  color = "white") +
   facet_wrap(~ Anfangsbezirk) +
-  theme_bw()
+  theme_bw() + 
+  labs(fill = "Umzug", y = "Anteil Umzüge") +
+  scale_fill_manual(values = c("außerstaedtisch" = "#FFFF6D", "Restbezirke" = "#009292", "Nachbarbezirke" = "#DB6D00", "selber Bezirk" = "#B66DFF")) +
+  theme(axis.text.x = element_text(size = 7))
+
+# save plots
+ggsave("Results/plot_Umzug_Stadt.jpg", plot = plot_Umzug_Stadt, width = 12, height = 8)
+ggsave("Results/plot_Umzug_Bezirke.jpg", plot = plot_Umzug_Bezirke, width = 12, height = 8)
