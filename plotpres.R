@@ -46,7 +46,7 @@ bnew <-bnew%>% #damit auf plot nicht abgeschnitten wird
     sn == 18 ~ "Untergiesing",
     sn == 19 ~ "Thalkirchen",
     sn == 20 ~ "Hadern",
-    sn == 21 ~ "Passing",
+    sn == 21 ~ "Pasing",
     sn == 22 ~ "Aubing",
     sn == 23 ~ "Allach",
     sn == 24 ~ "Feldmoching",
@@ -75,7 +75,7 @@ mnew <- mnew%>%
     sn == 18 ~ "Untergiesing",                          
     sn == 19 ~ "Thalkirchen",
     sn == 20 ~ "Hadern",
-    sn == 21 ~ "Passing",
+    sn == 21 ~ "Pasing",
     sn == 22 ~ "Aubing",
     sn == 23 ~ "Allach",
     sn == 24 ~ "Feldmoching",
@@ -100,11 +100,11 @@ ggsave("Results/p1.jpg", plot = p1,width = 10, height = 6)
 mplot1 <- mnew%>%
   filter(Raumbezug == "Stadt München")
 p2<-ggplot(mplot1, aes(x = Jahr, y = Basiswert.5, color = Ausprägung)) + geom_point() + 
-  geom_line() +labs(y = "mittlere Wohnbevölkerung", 
+  geom_line() +labs(y = "mittlere Wohnbevölkerung in Millionen", 
                     title = "Einwohnerzahl nach Staatsbürgerschaft",
                     color="Staatsbürgerschaft")+
-  scale_y_continuous(labels = label_number(scale = 1e-6,suffix = "Mio."))+
-  theme_bw()
+  scale_y_continuous(labels = label_number(scale = 1e-6)) + theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
 p2
 
 ggsave("Results/p2.jpg", plot = p2,width = 10, height = 6)
@@ -130,12 +130,39 @@ p3 <-bnew %>% filter(Raumbezug != "Stadt München") %>%
   labs(y = "Index (2002=100)",
        title = "Potezentuale Bevölkerungsentwicklung nach Stadbezirken")+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text(size = 7,face="bold"),
         panel.spacing.x = unit(1.2, "lines"))
 p3
 
 ggsave("Results/p3.jpg", plot = p3,width = 10, height = 6)
+
+
+#Prozentuale Bevölkerungsentwicklung in der Stadt München
+orderbb <- bnew %>% 
+  filter(Jahr == max(Jahr),Raumbezug == "Stadt München") %>% 
+  arrange(desc(indexb1))
+
+bnew$Raumbezug <- factor(bnew$Raumbezug , levels = orderbb$Raumbezug )
+
+p3b <-bnew %>% filter(Raumbezug == "Stadt München") %>% 
+  ggplot(aes(x = Jahr, y = indexb1)) +
+  geom_point(color = "blue",size=1) +
+  geom_line(color = "blue")+  
+  labs(y = "Index (2002=100)",
+       title = "Potezentuale Bevölkerungsentwicklung in der Stadt München")+
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text(size = 7,face="bold"),
+        panel.spacing.x = unit(1.2, "lines"))
+
+p3b
+
+ggsave("Results/p3b.jpg", plot = p3,width = 10, height = 6)
+
+
 
 
 #Bevölkerungsentwicklung (Indexdarstellung)
@@ -156,14 +183,31 @@ ggplot(aes(x = Jahr, y = indexb5, color = Ausprägung)) +
   geom_line()+ facet_wrap(~ Raumbezug)+ 
   labs(y = "Index (2002=100)",
        color = "Staatsbürgerschaft",
-       title = "Bevölkerungsentwicklung (Indexdarstellung)")+
+       title = "Bevölkerungsentwicklung in den Stadtbezirken")+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text(size = 7,face="bold"),
         panel.spacing.x = unit(1.2, "lines"))
 p4
 
 ggsave("Results/p4.jpg", plot = p4,width = 10, height = 6)
+
+
+#Bevölkerungsentwicklung in der Stadt München
+p4b <- mnew %>% filter(Raumbezug == "Stadt München") %>% 
+  ggplot(aes(x = Jahr, y = indexb5, color = Ausprägung)) +
+  geom_point(size=0.6) +geom_line() +
+  labs(y = "Index (2002=100)",
+       color = "Staatsbürgerschaft",
+       title = "Bevölkerungsentwicklung in der Stadt München ")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+p4b
+
+
+ggsave("Results/p4b.jpg", plot = p4b,width = 10, height = 6)
+
 
 
 #Entwicklung in der Stadt München
@@ -175,14 +219,14 @@ mnew <- mnew%>%
 p5 <- mnew%>%
   filter(sn == 26)%>%
  ggplot( aes(x = Jahr, y = ar, color = Ausprägung)) + geom_point()+ 
-  geom_line() + labs(y = "Nettoumzug",
+  geom_line() + labs(y = "Nettoumzug (Zuzug – Wegzug) in Tausend",
                      title = "Entwicklung in der Stadt München",
                      color = "Staatsbürgerschaft") + 
-  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) +
-  theme_bw()
+  scale_y_continuous(labels = label_number(scale = 1e-3)) +theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
 
 p5
-ggsave("Results/p5.jpg", plot = p5,width = 10, height = 6)
+ggsave("Results/p5.jpg", plot = p5,width = 6, height = 4)
 
 
 #Nettozuzug
@@ -225,14 +269,16 @@ p7<- mnew%>%
   filter(sn == 26)%>%
   ggplot( aes(x = Jahr, y = Basiswert.1 + Basiswert.2, color = Ausprägung)) + geom_point()+ 
   geom_line() + facet_wrap(~Raumbezug) +
-  labs(y = "Zuzug", 
+  labs(y = "Zuzug in Tausend", 
        title = "Entwicklung in der Stadt München",
        color = "Staatsbürgerschaft") +
-  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) + 
-  theme_bw() 
+  scale_y_continuous(labels = label_number(scale = 1e-3)) + theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5),
+        strip.text = element_blank())
+  
 p7
 
-ggsave("Results/p7.jpg", plot = p7,width = 10, height = 6)
+ggsave("Results/p7.jpg", plot = p7,width = 5, height = 3)
 
 
 #Entwicklung in der Stadt München
@@ -240,14 +286,15 @@ p8<-mnew%>%
   filter(sn == 26)%>%
   ggplot( aes(x = Jahr, y = Basiswert.3 + Basiswert.4, color = Ausprägung)) + geom_point()+ 
   geom_line() + facet_wrap(~Raumbezug) +
-  labs(y = "Wegzug", 
+  labs(y = "Wegzug in Tausend", 
        title = "Entwicklung in der Stadt München" ,
        color = "Staatsbürgerschaft") +
-  scale_y_continuous(labels = label_number(scale = 1e-3,suffix = "Tsd.")) +
-  theme_bw() 
+  scale_y_continuous(labels = label_number(scale = 1e-3)) +
+  theme_bw()+ theme(plot.title = element_text(hjust = 0.5),
+                    strip.text = element_blank())
 p8
 
-ggsave("Results/p8.jpg", plot = p8,width = 10, height = 6)
+ggsave("Results/p8.jpg", plot = p8,width = 5, height = 3)
 
 
 #Entwicklung in den Stadtbezirken
@@ -350,6 +397,56 @@ p12
 
 ggsave("Results/p12.jpg", plot = p12,width = 10, height = 6)
 
+
+
+mnew <- mnew%>% 
+  group_by(Raumbezug, Ausprägung, Jahr)%>%
+  mutate(au = 100 *(Basiswert.3 + Basiswert.1)/ Basiswert.5,
+         inn = 100 *(Basiswert.2 ) / Basiswert.5)
+
+#titel Außerstädtische Umzüge der Stadt München; y = Anteil
+p13 <- mnew%>%
+  filter(sn == 26)%>%
+  ggplot(aes(x = Jahr, y = inn + au, color = Ausprägung)) +
+  geom_point() + geom_line() + 
+  labs(title="Außerstädtische Umzüge der Stadt München",
+       y = "Anteil",
+       color = "Staatsbürgerschaft") + theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+p13
+
+ggsave("Results/p13.jpg", plot = p13,width = 8, height = 6)  
+
+
+#titel Innerstädtische Umzüge der Stadt München; y = Anteil
+p14 <- mnew%>%
+  filter(sn == 26)%>%
+  ggplot(aes(x = Jahr, y = au, color = Ausprägung)) + 
+  geom_point() + geom_line() +
+  labs(title="Innerstädtische Umzüge der Stadt München",
+       y = "Anteil",
+       color = "Staatsbürgerschaft") + theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+p14 
+
+ggsave("Results/p14.jpg", plot = p14,width = 8, height = 6)
+
+
+#titel Umzüge der Stadt München; y = Anteil
+p15 <- mnew%>%
+  filter(sn == 26)%>%
+  ggplot(aes(x = Jahr, y = inn, color = Ausprägung)) + 
+  geom_point() + geom_line() +
+  labs(title="Umzüge der Stadt München",
+       y = "Anteil",
+       color = "Staatsbürgerschaft") + theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+p15
+
+ggsave("Results/p14.jpg", plot = p14,width = 8, height = 6)
 
 
 
