@@ -385,11 +385,12 @@ ggplot(aes(x = Jahr, y = rb5, color = Ausprägung)) +
   geom_point(size=0.6)+ geom_line() +
   facet_wrap(~Raumbezug) +
   labs(y= "Anteil", 
-       title = "Staatsbürgerschaft",
+       title = "Entwicklung der Staatsbürgerschaft ind den bezirken",
        color = "Staatsbürgerschaft")+
   scale_y_continuous(limits = c(0,1))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
         strip.text = element_text(size = 7,face="bold"),
         panel.spacing.x = unit(1.2, "lines"))
   
