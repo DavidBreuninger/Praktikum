@@ -417,7 +417,7 @@ p13 <- mnew%>%
 
 p13
 
-ggsave("Results/p13.jpg", plot = p13,width = 5, height = 3)  
+ggsave("Results/p13.jpg", plot = p13,width = 10, height = 6)  
 
 
 p14 <- mnew%>%
@@ -431,7 +431,7 @@ p14 <- mnew%>%
 
 p14 
 
-ggsave("Results/p14.jpg", plot = p14,width = 5, height = 3)
+ggsave("Results/p14.jpg", plot = p14,width = 10, height = 6)
 
 
 p15 <- mnew%>%
@@ -445,7 +445,7 @@ p15 <- mnew%>%
 
 p15
 
-ggsave("Results/p15.jpg", plot = p15,width = 5, height = 3)
+ggsave("Results/p15.jpg", plot = p15,width = 10, height = 6)
 
 
 
