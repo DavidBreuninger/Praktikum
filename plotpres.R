@@ -397,7 +397,21 @@ ggplot(aes(x = Jahr, y = rb5, color = Ausprägung)) +
 p12
 
 ggsave("Results/p12.jpg", plot = p12,width = 10, height = 6)
+pnew<-mnew%>%
+  filter(Ausprägung != "insgesamt" , sn == 26)%>%
+  ggplot(aes(x = Jahr, y = rb5, color = Ausprägung)) +
+  geom_point(size=0.6)+ geom_line() +
+  labs(y= "Anteil", 
+       title = "Entwicklung der Staatsbürgerschaft in der Stadt München",
+       color = "Staatsbürgerschaft")+
+  scale_y_continuous(limits = c(0,1))+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text(size = 7,face="bold"),
+        panel.spacing.x = unit(1.2, "lines"))
 
+pnew
 
 
 mnew <- mnew%>% 
@@ -449,8 +463,9 @@ ggsave("Results/p15.jpg", plot = p15,width = 10, height = 6)
 
 
 
-
-
+mnew%>%
+  filter(sn == 26)%>%
+ggplot(aes(x = Jahr, y = Indikatorwert, color = Ausprägung)) +geom_point() + geom_line()
 
 
 
