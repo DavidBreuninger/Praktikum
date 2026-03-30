@@ -120,5 +120,5 @@ plot_muenchen_prozent <- ggplot(Mobilitaet_allg, aes(x = Jahr,  y = Prozent)) +
   theme_bw()
 
 # save plots
-ggsave("Results/plot_muenchen_prozent.jpg", plot = plot_Umzug_Stadt, width = 12, height = 8)
-ggsave("Results/plot_stadt_prozent.jpg", plot = plot_Umzug_Bezirke, width = 12, height = 8)
+ggsave("Results/plot_muenchen_prozent.jpg", plot = plot_muenchen_prozent, width = 12, height = 8)
+ggsave("Results/plot_stadt_prozent.jpg", plot = plot_stadt_prozent, width = 12, height = 8)
