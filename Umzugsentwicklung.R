@@ -33,7 +33,7 @@ ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl,
   labs(y = "Anzahl Umzüge", fill = "Umzug") +
   scale_fill_manual(values = c("außerstaedtisch" = "#F0D852", "innerstaedtisch" = "#8491B4"))
 
-ggplot(umzug_Bezirksgruppen_long, aes(x = Jahr, y = Anzahl, 
++ggplot(umzug_Bezirksgruppen_long, aes(x = Jahr, y = Anzahl, 
                                       fill = factor(Umzug, levels = c("außerstaedtisch", "sonstige Bezirke", "Nachbarbezirke", "selber Bezirk")))) + 
   geom_bar(stat = "identity",  color = "white") +
   facet_wrap(~ Anfangsbezirk, scales = "free_y") +
@@ -86,7 +86,7 @@ Mobilitaet_muenchen_weg <- Mobilitaet_long %>%
 plot_stadt_prozent <- ggplot(Mobilitaet_muenchen_weg,
        aes(x = Jahr, y = Prozent, color = Wegzug)) +
   geom_point() + geom_line() +
-  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerung", color = "Umzug") + 
+  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerungzahl", color = "Umzug") + 
   theme_bw() +
   scale_color_manual(values = c("#F0D852", "#8491B4"))
 
@@ -116,7 +116,7 @@ Mobilitaet_allg <- Mobilitaet_muenchen_weg %>%
 
 plot_muenchen_prozent <- ggplot(Mobilitaet_allg, aes(x = Jahr,  y = Prozent)) +
   geom_point(color = "black") + geom_line(color = "black") +
-  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerung") +
+  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerungszahl") +
   theme_bw()
 
 # save plots
