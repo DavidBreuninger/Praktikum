@@ -46,17 +46,17 @@ plot_Umzug_Stadt <- ggplot(umzug_stadt_long, aes(x = Jahr, y = Anzahl, fill = Um
   geom_bar(position = "fill", stat = "identity",  color = "white") +
   facet_wrap(~ Anfangsbezirk) +
   theme_bw() + 
-  ylab("Anteil Umzüge") +
+  labs(fill = "Umzug", y = "Anteil", title = "Umzüge je nach Bezirk")  +
   scale_fill_manual(values = c("außerstaedtisch" = "#F0D852", "innerstaedtisch" = "#8491B4")) + 
   theme(axis.text.x = element_text(size = 7))
 
 plot_Umzug_Bezirke <- ggplot(umzug_Bezirksgruppen_long, 
                              aes(x = Jahr, y = Anzahl, 
-                                 fill = factor(Umzug, levels = c("außerstaedtisch", "Restbezirke", "Nachbarbezirke", "selber Bezirk")))) + 
+                                 fill = factor(Umzug, levels = c("außerstaedtisch", "sonstige Bezirke", "Nachbarbezirke", "selber Bezirk")))) + 
   geom_bar(position = "fill", stat = "identity",  color = "white") +
   facet_wrap(~ Anfangsbezirk) +
   theme_bw() + 
-  labs(fill = "Umzug", y = "Anteil Umzüge") +
+  labs(fill = "Umzug", y = "Anteil", title = "Umzüge je nach Bezirk") +
   scale_fill_manual(values = c("außerstaedtisch" = "#F0D852", "sonstige Bezirke" = "#009292", "Nachbarbezirke" = "#DB6D00", "selber Bezirk" = "#B66DFF")) +
   theme(axis.text.x = element_text(size = 7))
 
@@ -134,3 +134,12 @@ ggplot(Mobilitaet_muenchen_weg,
   labs(y = "Anteil", title = "Umzüge München") + 
   theme_bw() 
 
+Mobilitaet_allg <- Mobilitaet_muenchen_weg %>%
+  group_by(Jahr) %>%
+  summarise(Gesamtwegzug = sum(Anzahl_Wegzug)) %>%
+  ungroup()
+
+ggplot(Mobilitaet_allg, aes(x = Jahr,  y = Gesamtwegzug)) +
+  geom_point(color = "black") + geom_line(color = "black") +
+  scale_y_continuous(labels = label_number(scale = 1e-3)) +
+  labs(y =  "Anzahl in Tsd", title = "Umzug in München")
