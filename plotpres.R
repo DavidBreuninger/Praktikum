@@ -405,12 +405,12 @@ mnew <- mnew%>%
   mutate(au = 100 *(Basiswert.3 + Basiswert.1)/ Basiswert.5,
          inn = 100 *(Basiswert.2 ) / Basiswert.5)
 
-#titel Außerstädtische Umzüge der Stadt München; y = Anteil
+
 p13 <- mnew%>%
   filter(sn == 26)%>%
   ggplot(aes(x = Jahr, y = inn + au, color = Ausprägung)) +
   geom_point() + geom_line() + 
-  labs(title="Außerstädtische Umzüge in der Stadt München",
+  labs(title="Umzüge in der Stadt München",
        y = "Anteil in Protzent",
        color = "Staatsbürgerschaft") + theme_bw() + 
   theme(plot.title = element_text(hjust = 0.5))
@@ -420,12 +420,11 @@ p13
 ggsave("Results/p13.jpg", plot = p13,width = 5, height = 3)  
 
 
-#titel Innerstädtische Umzüge der Stadt München; y = Anteil
 p14 <- mnew%>%
   filter(sn == 26)%>%
   ggplot(aes(x = Jahr, y = au, color = Ausprägung)) + 
   geom_point() + geom_line() +
-  labs(title="Innerstädtische Umzüge in der Stadt München",
+  labs(title="Außerstädtische Umzüge in der Stadt München",
        y = "Anteil in Protzent",
        color = "Staatsbürgerschaft") + theme_bw() + 
   theme(plot.title = element_text(hjust = 0.5))
@@ -435,12 +434,11 @@ p14
 ggsave("Results/p14.jpg", plot = p14,width = 5, height = 3)
 
 
-#titel Umzüge der Stadt München; y = Anteil
 p15 <- mnew%>%
   filter(sn == 26)%>%
   ggplot(aes(x = Jahr, y = inn, color = Ausprägung)) + 
   geom_point() + geom_line() +
-  labs(title="Umzüge in der Stadt München",
+  labs(title="Innerstädtische Umzüge in der Stadt München",
        y = "Anteil in Protzent",
        color = "Staatsbürgerschaft") + theme_bw() + 
   theme(plot.title = element_text(hjust = 0.5))
