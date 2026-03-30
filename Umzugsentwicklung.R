@@ -68,51 +68,25 @@ ggsave("Results/plot_Umzug_Bezirke.jpg", plot = plot_Umzug_Bezirke, width = 12, 
 # pivot_to_lonh for plotting
 
 Mobilitaet_long <- Mobilitaet_thin %>%
-  mutate(Raumbezug = case_when(
-    BezirksID == 1 ~ "Altstadt",
-    BezirksID == 2 ~ "Ludwigsvorstadt",
-    BezirksID == 3 ~ "Maxvorstadt",
-    BezirksID == 4 ~ "Schwabing-West",
-    BezirksID == 5 ~ "Haidhausen",
-    BezirksID == 6 ~ "Sendling",
-    BezirksID == 7 ~ "Sendling-Westpark",
-    BezirksID == 8 ~ "Schwanthalerhöhe",
-    BezirksID == 9 ~ "Neuhausen",
-    BezirksID == 10 ~ "Moosach",
-    BezirksID == 11 ~ "Milbertshofen",
-    BezirksID == 12 ~ "Schwabing",
-    BezirksID == 13 ~ "Bogenhausen",
-    BezirksID == 14 ~ "Berg am Laim",
-    BezirksID == 15 ~ "Trudering",
-    BezirksID == 16 ~ "Ramersdorf",
-    BezirksID == 17 ~ "Obergiesing",
-    BezirksID == 18 ~ "Untergiesing",
-    BezirksID == 19 ~ "Thalkirchen",
-    BezirksID == 20 ~ "Hadern",
-    BezirksID == 21 ~ "Pasing",
-    BezirksID == 22 ~ "Aubing",
-    BezirksID == 23 ~ "Allach",
-    BezirksID == 24 ~ "Feldmoching",
-    BezirksID == 25 ~ "Laim",
-    TRUE ~ Raumbezug)) %>%
   pivot_longer(cols = c("innerstädtisch.Weggezogene..", "außerstädtisch.Weggezogene."), 
                names_to = "Wegzug",
-               values_to = "Anzahl_Wegzug") 
+               values_to = "Anzahl_Wegzug") %>%
+  rename("mittlere_Bevölkerung" = mittlere.Hauptwohnsitzbevölkerung.)
   
 # plot for Zuzug
 Mobilitaet_muenchen_weg <- Mobilitaet_long %>%
   filter(Ausprägung == "insgesamt" & Raumbezug == "Stadt München") %>%
-  select(all_of(c("Jahr", "Wegzug", "Anzahl_Wegzug"))) %>%
+  select(all_of(c("Jahr", "Wegzug", "Anzahl_Wegzug", "mittlere_Bevölkerung"))) %>%
   mutate(Wegzug = case_when(
     Wegzug == "innerstädtisch.Weggezogene.." ~ "innerstaedtisch",
-    Wegzug == "außerstädtisch.Weggezogene." ~ "außerstaedtisch"))
+    Wegzug == "außerstädtisch.Weggezogene." ~ "außerstaedtisch")) %>% 
+  mutate(Prozent = Anzahl_Wegzug / mittlere_Bevölkerung * 100)
 
 # lineplot for Umzug Muenchen
-ggplot(Mobilitaet_muenchen_weg,
-       aes(x = Jahr, y = Anzahl_Wegzug, color = Wegzug)) +
+plot_stadt_prozent <- ggplot(Mobilitaet_muenchen_weg,
+       aes(x = Jahr, y = Prozent, color = Wegzug)) +
   geom_point() + geom_line() +
-  scale_y_continuous(labels = label_number(scale = 1e-3)) +
-  labs(y = "Anzahl in Tsd.", title = "Umzüge München") + 
+  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerung", color = "Umzug") + 
   theme_bw() +
   scale_color_manual(values = c("#F0D852", "#8491B4"))
 
@@ -135,11 +109,16 @@ ggplot(Mobilitaet_muenchen_weg,
   theme_bw() 
 
 Mobilitaet_allg <- Mobilitaet_muenchen_weg %>%
-  group_by(Jahr) %>%
+  group_by(Jahr, mittlere_Bevölkerung) %>%
   summarise(Gesamtwegzug = sum(Anzahl_Wegzug)) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(Prozent = Gesamtwegzug / mittlere_Bevölkerung * 100)
 
-ggplot(Mobilitaet_allg, aes(x = Jahr,  y = Gesamtwegzug)) +
+plot_muenchen_prozent <- ggplot(Mobilitaet_allg, aes(x = Jahr,  y = Prozent)) +
   geom_point(color = "black") + geom_line(color = "black") +
-  scale_y_continuous(labels = label_number(scale = 1e-3)) +
-  labs(y =  "Anzahl in Tsd", title = "Umzug in München")
+  labs(y = "Anteil in %", title = "Anteil Umzüge an mittlerer Bevölkerung") +
+  theme_bw()
+
+# save plots
+ggsave("Results/plot_muenchen_prozent.jpg", plot = plot_Umzug_Stadt, width = 12, height = 8)
+ggsave("Results/plot_stadt_prozent.jpg", plot = plot_Umzug_Bezirke, width = 12, height = 8)
